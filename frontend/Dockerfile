@@ -9,7 +9,7 @@ RUN npm ci
 
 # Copy source code dan build
 COPY . .
-RUN npm run build
+RUN chmod +x node_modules/.bin/* && npm run build
 # Hasil build ada di /app/dist
 
 # Stage 2: Serve dengan Nginx (ringan)
