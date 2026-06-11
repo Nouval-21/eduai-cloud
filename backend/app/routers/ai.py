@@ -19,6 +19,13 @@ class QuizRequest(BaseModel):
 
 @router.post("/ask")
 async def ask_question(req: AskRequest, db: Session = Depends(get_db)):
+    from app.models.models import User
+    user = db.query(User).filter(User.id == req.user_id).first()
+    if not user:
+        user = User(id=req.user_id, username=f"user_{req.user_id}", email=f"user_{req.user_id}@eduai.com", hashed_password="dummy_hash")
+        db.add(user)
+        db.commit()
+
     history = db.query(ChatHistory)\
         .filter(ChatHistory.user_id == req.user_id)\
         .order_by(ChatHistory.created_at.desc())\
