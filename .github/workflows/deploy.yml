@@ -53,16 +53,16 @@ jobs:
         run: |
           docker build -t ${{ env.ECR_REGISTRY }}/eduai-backend:${{ github.sha }} ./backend
           docker push ${{ env.ECR_REGISTRY }}/eduai-backend:${{ github.sha }}
-          docker tag ${{ env.ECR_REGISTRY }}/eduai-backend:${{ github.sha }} ${{ env.ECR_REGISTRY }}/eduai-backend:latest
-          docker push ${{ env.ECR_REGISTRY }}/eduai-backend:latest
+          docker tag ${{ env.ECR_REGISTRY }}/eduai-backend:${{ github.sha }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/eduai-backend:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/eduai-backend:latest
       - name: Build & push frontend
         run: |
           docker build \
             --build-arg VITE_API_URL=http://${{ secrets.EC2_BACKEND_HOST }}:8000 \
             -t ${{ env.ECR_REGISTRY }}/eduai-frontend:${{ github.sha }} ./frontend
           docker push ${{ env.ECR_REGISTRY }}/eduai-frontend:${{ github.sha }}
-          docker tag ${{ env.ECR_REGISTRY }}/eduai-frontend:${{ github.sha }} ${{ env.ECR_REGISTRY }}/eduai-frontend:latest
-          docker push ${{ env.ECR_REGISTRY }}/eduai-frontend:latest
+          docker tag ${{ env.ECR_REGISTRY }}/eduai-frontend:${{ github.sha }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/eduai-frontend:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/eduai-frontend:latest
 
   deploy-backend:
     name: Deploy Backend ke EC2
@@ -78,7 +78,7 @@ jobs:
             aws ecr get-login-password --region ap-southeast-1 | \
               docker login --username AWS --password-stdin \
               ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com
-            docker pull ${{ env.ECR_REGISTRY }}/eduai-backend:latest
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/eduai-backend:latest
             docker stop eduai-backend 2>/dev/null || true
             docker rm eduai-backend 2>/dev/null || true
             docker run -d \
@@ -91,7 +91,7 @@ jobs:
               -e R2_ACCESS_KEY_ID="${{ secrets.R2_ACCESS_KEY_ID }}" \
               -e R2_SECRET_ACCESS_KEY="${{ secrets.R2_SECRET_ACCESS_KEY }}" \
               -e R2_ENDPOINT_URL="${{ secrets.R2_ENDPOINT_URL }}" \
-              ${{ env.ECR_REGISTRY }}/eduai-backend:latest
+              ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/eduai-backend:latest
             sleep 5 && curl http://localhost:8000/health
 
   deploy-frontend:
@@ -108,12 +108,12 @@ jobs:
             aws ecr get-login-password --region ap-southeast-1 | \
               docker login --username AWS --password-stdin \
               ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com
-            docker pull ${{ env.ECR_REGISTRY }}/eduai-frontend:latest
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/eduai-frontend:latest
             docker stop eduai-frontend 2>/dev/null || true
             docker rm eduai-frontend 2>/dev/null || true
             docker run -d \
               --name eduai-frontend \
               --restart always \
               -p 80:80 \
-              ${{ env.ECR_REGISTRY }}/eduai-frontend:latest
+              ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/eduai-frontend:latest
             sleep 3 && curl http://localhost:80
