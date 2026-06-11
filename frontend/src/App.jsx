@@ -231,10 +231,10 @@ function App() {
                         {qi + 1}. {q.question}
                       </p>
                       <div className="quiz-options">
-                        {(q.options || []).map((opt, oi) => (
+                        {Object.entries(q.options || {}).map(([key, opt], oi) => (
                           <button
                             key={oi}
-                            className={`quiz-option ${selectedAnswers[qi] === oi ? (oi === q.correct_index ? "correct" : "wrong") : ""}`}
+                            className={`quiz-option ${selectedAnswers[qi] === oi ? (key === q.correct_answer ? "correct" : "wrong") : ""}`}
                             onClick={() =>
                               setSelectedAnswers((prev) => ({
                                 ...prev,
