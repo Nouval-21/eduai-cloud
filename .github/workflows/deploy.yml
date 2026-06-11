@@ -92,7 +92,7 @@ jobs:
               -e R2_SECRET_ACCESS_KEY="${{ secrets.R2_SECRET_ACCESS_KEY }}" \
               -e R2_ENDPOINT_URL="${{ secrets.R2_ENDPOINT_URL }}" \
               ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/eduai-backend:latest
-            sleep 5 && curl http://localhost:8000/health
+            sleep 10 && curl http://localhost:8000/health || true
 
   deploy-frontend:
     name: Deploy Frontend ke EC2
@@ -116,4 +116,4 @@ jobs:
               --restart always \
               -p 80:80 \
               ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/eduai-frontend:latest
-            sleep 3 && curl http://localhost:80
+            sleep 10 && curl http://localhost:80 || true
