@@ -6,6 +6,7 @@ WORKDIR /app
 # Install dependencies dulu (di-cache)
 COPY package*.json .
 RUN npm ci
+ENV VITE_API_URL=
 
 # Copy source code dan build
 COPY . .
