@@ -17,6 +17,9 @@ class QuizRequest(BaseModel):
     topic: str
     num_questions: int = 5
 
+class SummarizeRequest(BaseModel):
+    text: str
+
 @router.post("/ask")
 async def ask_question(req: AskRequest, db: Session = Depends(get_db)):
     from app.models.models import User
@@ -57,9 +60,9 @@ async def create_quiz(req: QuizRequest):
         raise HTTPException(status_code=500, detail=f"Quiz generation failed: {str(e)}")
 
 @router.post("/summarize")
-async def summarize(text: str):
+async def summarize(req: SummarizeRequest):
     try:
-        summary = await summarize_material(text)
+        summary = await summarize_material(req.text)
         return {"summary": summary}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
