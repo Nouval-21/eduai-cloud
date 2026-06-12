@@ -90,6 +90,7 @@ jobs:
               -e R2_ACCESS_KEY_ID="${{ secrets.R2_ACCESS_KEY_ID }}" \
               -e R2_SECRET_ACCESS_KEY="${{ secrets.R2_SECRET_ACCESS_KEY }}" \
               -e R2_ENDPOINT_URL="${{ secrets.R2_ENDPOINT_URL }}" \
+              --network eduai-net \
               ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/eduai-backend:latest
             sleep 10 && curl http://localhost:8000/health || true
 
